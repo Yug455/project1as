@@ -1,13 +1,23 @@
 const express = require('express');
 
 const app=express()
-app.use("/user",(req,res)=>{
-    res.end("others will not get a chance to enter")
-})
-app.get("/user",(req,res)=>{
+
+app.get("/user/:userid/:password",(req,res)=>{
+    console.log(req.params)
+   let useridd= req.params.userid
+   console.log(`${useridd}`)
     res.end("this is a get request")
 })
-app.post("/user",(req,res)=>{
+// app.get(/.*fly$/, (req, res) => {
+//   res.send('This route ends with "fly"');
+// });
+app.get("/users",(req,res)=>{
+   let useridd=req.query.userid
+    console.log(`${useridd}`)
+    res.end("thankyou for id ")
+})
+
+app.post("/users",(req,res)=>{
     res.end("congratulation user you have posted something")
 })
 app.patch("/user",(req,res)=>{
