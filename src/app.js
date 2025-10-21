@@ -1,17 +1,21 @@
 const express = require('express');
 
 const app=express()
-app.use("/hum",(req,res)=>{
- res.end("hi")
+app.use("/user",(req,res)=>{
+    res.end("others will not get a chance to enter")
 })
-app.use("/test",(req,res)=>{
- res.end("hello world")
+app.get("/user",(req,res)=>{
+    res.end("this is a get request")
 })
-app.use("/hello",(req,res)=>{
-    res.end("my name is yug")
+app.post("/user",(req,res)=>{
+    res.end("congratulation user you have posted something")
 })
-
-
+app.patch("/user",(req,res)=>{
+    res.end("congratulations user you have patch a small part")
+})
+app.delete("/user",(req,res)=>{
+    res.end("congratulations user you have deleted you")
+})
 
 
 app.listen(9000,(req,res)=>{
