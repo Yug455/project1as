@@ -5,7 +5,14 @@ const {adminauth, userauth}=require("../auth/admin")
 app.use("/admin",adminauth)
 app.get("/admin/getdata",(req,res)=>{
     console.log("executed admin auth correctly")
+    throw new Error("duvvh");
+    
     res.send("data send")
+})
+app.use("/",(err,req,res,next)=>{
+    if(err){
+        res.send("not working pls call yug malhotra for instant fixing")
+    }
 })
 app.get("/user/:userid/:password",(req,res)=>{
     console.log(req.params)
