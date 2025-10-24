@@ -1,7 +1,12 @@
 const express = require('express');
 
 const app=express()
-
+const {adminauth, userauth}=require("../auth/admin")
+app.use("/admin",adminauth)
+app.get("/admin/getdata",(req,res)=>{
+    console.log("executed admin auth correctly")
+    res.send("data send")
+})
 app.get("/user/:userid/:password",(req,res)=>{
     console.log(req.params)
    let useridd= req.params.userid
@@ -11,26 +16,20 @@ app.get("/user/:userid/:password",(req,res)=>{
 // app.get(/.*fly$/, (req, res) => {
 //   res.send('This route ends with "fly"');
 // });
-app.get("/users",
-  [  (req,res, next)=>{
+app.get("/users",userauth,
+  (req,res,)=>{
    let useridd=req.query.userid
     console.log(`${useridd}`)
-    next();
-    // res.send("thankyou for id ")
-}
- ,(req,res,next)=>{
-   let useridd=req.query.userid
-    console.log(`${useridd}`)
-    next();
-    // res.send("thankyou for id 2 here ")
-}]
- ,(req,res,)=>{
-   let useridd=req.query.userid
-    console.log(`${useridd}`)
-    res.send("thankyou for id 3 here and here ")
-}
-)
-
+    // next()
+    res.send("thankyou for id2")
+})
+// app.get("/users",
+//   (req,res, next)=>{
+//    let useridd=req.query.userid
+//     console.log(`${useridd}`)
+//     next();
+//     // res.send("thankyou for id ")
+// })
 app.post("/users",(req,res)=>{
     res.end("congratulation user you have posted something")
 })
