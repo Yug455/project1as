@@ -11,11 +11,25 @@ app.get("/user/:userid/:password",(req,res)=>{
 // app.get(/.*fly$/, (req, res) => {
 //   res.send('This route ends with "fly"');
 // });
-app.get("/users",(req,res)=>{
+app.get("/users",
+  [  (req,res, next)=>{
    let useridd=req.query.userid
     console.log(`${useridd}`)
-    res.end("thankyou for id ")
-})
+    next();
+    // res.send("thankyou for id ")
+}
+ ,(req,res,next)=>{
+   let useridd=req.query.userid
+    console.log(`${useridd}`)
+    next();
+    // res.send("thankyou for id 2 here ")
+}]
+ ,(req,res,)=>{
+   let useridd=req.query.userid
+    console.log(`${useridd}`)
+    res.send("thankyou for id 3 here and here ")
+}
+)
 
 app.post("/users",(req,res)=>{
     res.end("congratulation user you have posted something")
@@ -29,5 +43,5 @@ app.delete("/user",(req,res)=>{
 
 
 app.listen(9000,(req,res)=>{
- console.log("server started")
+ console.log("server started") 
 })
