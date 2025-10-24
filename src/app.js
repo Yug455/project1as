@@ -1,53 +1,17 @@
+// requiring express
 const express = require('express');
-
+// connecting to moongoose
+const {connectDB}=require("./config/databse")
+// initializing request 
 const app=express()
-const {adminauth, userauth}=require("../auth/admin")
-app.use("/admin",adminauth)
-app.get("/admin/getdata",(req,res)=>{
-    console.log("executed admin auth correctly")
-    throw new Error("duvvh");
-    
-    res.send("data send")
+// connecting to db
+connectDB().then(()=>{
+    console.log("connected db succsesfully")
+    app.listen(9000,(req,res)=>{
+    console.log("server started") 
 })
-app.use("/",(err,req,res,next)=>{
-    if(err){
-        res.send("not working pls call yug malhotra for instant fixing")
-    }
+}).catch(()=>{
+    console.log("an error occured")
 })
-app.get("/user/:userid/:password",(req,res)=>{
-    console.log(req.params)
-   let useridd= req.params.userid
-   console.log(`${useridd}`)
-    res.end("this is a get request")
-})
-// app.get(/.*fly$/, (req, res) => {
-//   res.send('This route ends with "fly"');
-// });
-app.get("/users",userauth,
-  (req,res,)=>{
-   let useridd=req.query.userid
-    console.log(`${useridd}`)
-    // next()
-    res.send("thankyou for id2")
-})
-// app.get("/users",
-//   (req,res, next)=>{
-//    let useridd=req.query.userid
-//     console.log(`${useridd}`)
-//     next();
-//     // res.send("thankyou for id ")
-// })
-app.post("/users",(req,res)=>{
-    res.end("congratulation user you have posted something")
-})
-app.patch("/user",(req,res)=>{
-    res.end("congratulations user you have patch a small part")
-})
-app.delete("/user",(req,res)=>{
-    res.end("congratulations user you have deleted you")
-})
+// apening port 
 
-
-app.listen(9000,(req,res)=>{
- console.log("server started") 
-})
