@@ -4,7 +4,7 @@ const express = require('express');
 const {connectDB}=require("./config/databse")
 // initializing request 
 const app=express()
-// connecting to db
+// connecting to db    
 connectDB().then(()=>{
     console.log("connected db succsesfully")
     app.listen(9000,(req,res)=>{
@@ -13,5 +13,5 @@ connectDB().then(()=>{
 }).catch(()=>{
     console.log("an error occured")
 })
-// apening port 
+// opening port 
 
