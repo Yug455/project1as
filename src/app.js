@@ -6,15 +6,13 @@ const {connectDB}=require("./config/databse")
 const app=express()
 // getting user model we have created in db
 const {User}=require("./models/user")
-
+// adding middleware for covertion javascript object
+app.use(express.json())
 // creating post route to add data in db manually 
 app.post("/signup",async (req,res)=>{
-     const user = new User({
-        FirstName:"ramji",
-        LastName: "shiva",
-         EmailId: "shivji@gmail.com",
-         Password:"2345"
-    })
+    console.log(req.body)
+
+     const user = new User(req.body)
 
    try{
     await user.save()
