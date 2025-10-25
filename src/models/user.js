@@ -1,6 +1,6 @@
-const {mongoose, model}= require ("mongoose")
+const {mongoose}= require ("mongoose")
 
-const Userschema= new mongoose.schema({
+const Userschema= new mongoose.Schema({
     FirstName:{
         type:String,
     },
