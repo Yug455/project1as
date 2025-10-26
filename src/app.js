@@ -1,3 +1,4 @@
+
 // requiring express
 const express = require('express');
 // reqiring moongoose
@@ -21,14 +22,14 @@ app.post("/signup",async (req,res)=>{
     res.send("user creates succesfully")
    }
    catch(err){
-    res.status(400).send("error occures"+err.message)
+    res.status(400).send("error occures"+err)
    }
     // saving 
     
 })
 app.get("/feed",async (req,res)=>{
     try{
-         const alluser= await User.find({})
+         const alluser= await User.f    
          res.send(alluser)
     }
     catch(err){
@@ -38,25 +39,43 @@ app.get("/feed",async (req,res)=>{
 app.get("/getuser", async (req,res)=>{
     const useremail=req.body.EmailId
     console.log(useremail)
-    try{                                                                                      // will only retun name age by this 
+    if(!useremail){
+     res.status(404).send("no user found")
+    }
+    else{
+             try{                                                                                      // will only retun name age by this 
          const userbyemail= await User.find({EmailId:useremail, Password:"mai nahi bataunga"},"FirstName, Age")
          // not workin understand it later channing 
         //  userbyemail.find({age:{$gt:15}})
+        
          console.log(userbyemail)
          res.send(userbyemail)
     }catch(err){
         res.status(400).send("an error occured")
     }
+    }
+
 })
+ app.delete("/deletesome",async(req,res)=>{
+    const userdelete= req.body.UserId
+    try{
+        const tobedele= await User.findByIdAndDelete(userdelete)
+        console.log(tobedele)
+        res.send(tobedele)
+    }catch(err){
+      res.send("error occured",err)
+    }
+ })
 
 // connecting to db    
-connectDB().then(()=>{
-    console.log("connected db succsesfully")
-    app.listen(9000,(req,res)=>{
-    console.log("server started") 
-})
-}).catch((err)=>{
-    console.log("an error occured", err.message)
-})
-
+connectDB()
+  .then(() => {
+    console.log("connected db successfully");
+    app.listen(9000, () => {
+      console.log("server started");
+    });
+  })
+  .catch((err) => {
+    console.error("database connection failed", err);
+  });
 
