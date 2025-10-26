@@ -66,6 +66,23 @@ app.get("/getuser", async (req,res)=>{
       res.send("error occured",err)
     }
  })
+  
+ app.patch("/updateuser",async(req,res)=>{
+  const userinfo =req.body.EmailId
+  const userName=req.body.FirstName
+  if(!userinfo){
+    res.send("error user email not founf")
+  }
+  else{
+    try{
+     const changes= await User.findOneAndUpdate({EmailId:userinfo},{FirstName:userName})
+     res.send(changes)
+  }catch(err){
+    res.status(500).send(err)
+  }
+  }
+
+ })
 
 // connecting to db    
 connectDB()
@@ -78,4 +95,5 @@ connectDB()
   .catch((err) => {
     console.error("database connection failed", err);
   });
+
 
