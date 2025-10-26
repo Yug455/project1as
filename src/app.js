@@ -1,5 +1,7 @@
 // requiring express
 const express = require('express');
+// reqiring moongoose
+   const mongoose = require("mongoose");
 // connecting to moongoose
 const {connectDB}=require("./config/databse")
 // initializing request 
@@ -24,6 +26,28 @@ app.post("/signup",async (req,res)=>{
     // saving 
     
 })
+app.get("/feed",async (req,res)=>{
+    try{
+         const alluser= await User.find({})
+         res.send(alluser)
+    }
+    catch(err){
+        res.status(400).send("something went wrong")
+    }
+})
+app.get("/getuser", async (req,res)=>{
+    const useremail=req.body.EmailId
+    console.log(useremail)
+    try{                                                                                      // will only retun name age by this 
+         const userbyemail= await User.find({EmailId:useremail, Password:"mai nahi bataunga"},"FirstName, Age")
+         // not workin understand it later channing 
+        //  userbyemail.find({age:{$gt:15}})
+         console.log(userbyemail)
+         res.send(userbyemail)
+    }catch(err){
+        res.status(400).send("an error occured")
+    }
+})
 
 // connecting to db    
 connectDB().then(()=>{
@@ -31,8 +55,8 @@ connectDB().then(()=>{
     app.listen(9000,(req,res)=>{
     console.log("server started") 
 })
-}).catch(()=>{
-    console.log("an error occured")
+}).catch((err)=>{
+    console.log("an error occured", err.message)
 })
-// opening port 
+
 
