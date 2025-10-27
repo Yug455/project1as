@@ -81,12 +81,12 @@ app.get("/getuser", async (req,res)=>{
     res.status(500).send(err)
   }
   }
-
+ 
  })
 
 // connecting to db    
 connectDB()
-  .then(() => {
+  .then(async() => {
     console.log("connected db successfully");
     app.listen(9000, () => {
       console.log("server started");
