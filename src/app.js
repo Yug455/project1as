@@ -67,18 +67,32 @@ app.get("/getuser", async (req,res)=>{
     }
  })
   
- app.patch("/updateuser",async(req,res)=>{
-  const userinfo =req.body.EmailId
-  const userName=req.body.FirstName
-  if(!userinfo){
-    res.send("error user email not founf")
+ app.patch("/updateuser/:UserId",async(req,res)=>{
+  
+  const data = req.body
+  const Id=req.params.UserId
+
+  if(!Id){
+    res.status(400).send("error user email not found")
+  }
+  if(data?.Skills.length>10){
+    throw new Error("skiils more than 10 not valid")
   }
   else{
     try{
-     const changes= await User.findOneAndUpdate({EmailId:userinfo},{FirstName:userName})
+      // definig what can be updated 
+      const Updates=["FirstName","Gender","Skills","Age","Password"]
+      const WhatShould= Object.keys(data).every((k)=>Updates.includes(k))
+      if(!WhatShould){
+        throw new Error("cannot be changes")
+      }
+     const changes= await User.findOneAndUpdate({_id:Id}, data,
+      {returnDocument:"after",
+        runValidators:true,
+      })
      res.send(changes)
   }catch(err){
-    res.status(500).send(err)
+    res.status(500).send(err.message)
   }
   }
  
