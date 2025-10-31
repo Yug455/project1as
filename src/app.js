@@ -11,21 +11,34 @@ const app=express()
 const {User}=require("./models/user")
 // adding middleware for covertion javascript object
 app.use(express.json())
+// requiring bcrypt for password 
+const bcrypt= require("bcrypt")
+// validating function 
+  const {validatepostsignup} = require("./utils/utility")
 // creating post route to add data in db manually 
 app.post("/signup",async (req,res)=>{
+  const {FirstName,LastName,Age,EmailId,Password} = req.body
     console.log(req.body)
 
-     const user = new User(req.body)
-
+// code 
    try{
-    await user.save()
+     // validate function 
+    validatepostsignup(req)
+   // encryting coming password 
+   const PasswordHash =await bcrypt.hash(Password,10)
+    const user = new User({
+      FirstName,
+      LastName,
+      Age,
+      EmailId,
+      Password:PasswordHash,
+    })
+      await user.save()
     res.send("user creates succesfully")
    }
    catch(err){
     res.status(400).send("error occures"+err)
-   }
-    // saving 
-    
+   } 
 })
 app.get("/feed",async (req,res)=>{
     try{
@@ -36,6 +49,28 @@ app.get("/feed",async (req,res)=>{
         res.status(400).send("something went wrong")
     }
 })
+app.post("/login", async (req, res) => {
+  try {
+    const { EmailId, Password } = req.body;
+    const user = await User.findOne({ EmailId });
+
+    if (!user) {
+       res.status(400).send("Invalid credentials");
+    }
+
+    const isMatch = await bcrypt.compare(Password, user.Password);
+    if (!isMatch) {
+      res.send("Invalid credentials");
+    } 
+    else{
+       res.send("User logged in successfully");
+    }
+    
+  } catch (err) {
+    return res.status(500).send(err.message);
+  }
+});
+
 app.get("/getuser", async (req,res)=>{
     const useremail=req.body.EmailId
     console.log(useremail)
