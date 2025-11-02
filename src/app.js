@@ -13,8 +13,14 @@ const {User}=require("./models/user")
 app.use(express.json())
 // requiring bcrypt for password 
 const bcrypt= require("bcrypt")
+// getting cookie parser
+const cookieparser= require("cookie-parser")
+// installing jsonweb token 
+const jwt=require("jsonwebtoken")
 // validating function 
   const {validatepostsignup} = require("./utils/utility")
+
+  app.use(cookieparser())
 // creating post route to add data in db manually 
 app.post("/signup",async (req,res)=>{
   const {FirstName,LastName,Age,EmailId,Password} = req.body
@@ -55,21 +61,42 @@ app.post("/login", async (req, res) => {
     const user = await User.findOne({ EmailId });
 
     if (!user) {
-       res.status(400).send("Invalid credentials");
+      return res.status(400).send("Invalid credentials"); 
     }
 
     const isMatch = await bcrypt.compare(Password, user.Password);
-    if (!isMatch) {
-      res.send("Invalid credentials");
+    if (isMatch) {
+      // creating jwt token 
+      const token = await jwt.sign({_id:user._id},"Develper!23")
+      // creating cookie 
+      res.cookie("Token",token)
+      res.send("user logged in succesfullt")
     } 
     else{
-       res.send("User logged in successfully");
+       res.send("Invalid credentials");
     }
     
   } catch (err) {
     return res.status(500).send(err.message);
   }
 });
+
+app.get("/profile",async(req,res)=>{
+ try{
+  // requiring cookie from postman
+   const cookie = req.cookies
+  // gettin the token set in login 
+  const {Token}= cookie
+  // verifying token 
+  const decodeid= jwt.verify(Token,"Develper!23")
+  console.log(decodeid)
+  const user=await User.findOne({_id:decodeid})
+  console.log(user)
+  res.send("getting user profile succsefully")
+ }catch(err){
+  res.send(err.message)
+ }
+})
 
 app.get("/getuser", async (req,res)=>{
     const useremail=req.body.EmailId
