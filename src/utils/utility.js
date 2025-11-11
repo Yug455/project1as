@@ -17,6 +17,15 @@ const { FirstName, LastName, Age, EmailId, Password } = req.body;
         throw new Error("give a strong password");
     }
 }
+const validateupdatingrequest=(req)=>{
+    const allowedfields= ["FirstName","LastName","Skills","EmailId","Gender","Age","Skills"]
+   const isallowed= Object.keys(req.body).every((field)=>{
+        allowedfields.includes(field)
+    })
+    return isallowed;
+    }
+
 module.exports={
     validatepostsignup,
+    validateupdatingrequest,
 }
