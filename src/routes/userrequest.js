@@ -1,12 +1,50 @@
 const express = require("express")
-const { userauth } = require("../middelware/auth")
+const  userauth  = require("../middelware/auth")
 const { User } = require("../models/user")
 const requestrouter = express.Router()
+const reqconnectionmongoose= require("../models/reqconnection")
+const moongoose = require("mongoose")
+requestrouter.post("/sendconnectionrequest/:status/:id",userauth, async (req,res)=>{
+    try{
+          const fromuserId= req.user._id
+    const touserId= req.params.id
+    const status = req.params.status
+    
+   const allowedstatus=["interested","ignored"]
+   const isvalid=allowedstatus.includes(status)
+        if(!isvalid){
+           throw new Error("not a valid status")
+        }
 
-requestrouter.post("/sendconnectionrequest",userauth, async (req,res)=>{
-    const user = req.user
-    // sending a connection request 
-    res.send(user.FirstName + "send the connection request ")
+    const connectionrequest = await User.findOne({
+        $or:[
+            {fromuserId,touserId},
+            {fromuserId:touserId,touserId:fromuserId}
+        ]
+    })
+    if(connectionrequest){
+       throw new Error("invalid user")
+    }
+    const isuserthere= await User.findById(touserId)
+    if(!isuserthere){
+        throw new Error("user not here in db")
+    }
+    const connectionreq= new reqconnectionmongoose({
+        fromuserId,
+        touserId,
+        status
+    })
+    const data= await connectionreq.save()
+    res.json({
+        data,
+        message:"connection request send succesfully"
+    })
+    }
+  catch(err){
+    res.send(err.message)
+         
+    
+  }
 })
 requestrouter.get("/feed",async (req,res)=>{
     try{
@@ -48,6 +86,37 @@ requestrouter.get("/getuser", async (req,res)=>{
       res.send("error occured",err)
     }
  })
- 
+
+ requestrouter.post("/request/review/:status/:requestId", userauth ,async(req,res)=>{
+    try{
+         const LoggedinUser = req.user
+    const {status,requestId}=req.params
+    const allowedstatus=["accepted","rejected"]
+
+    if (!allowedstatus.includes(status)){
+        throw new Error("not valid status")
+    }
+    const connectionreq= await reqconnectionmongoose.findOne({
+       _id:requestId,
+        touserId:LoggedinUser._id,
+        status:"interested",
+    })
+    if (!connectionreq){
+        throw new Error("invalid request request didnt found")
+    }
+    connectionreq.status = status
+    const data= await connectionreq.save()
+
+    res.status(200)
+    .json({
+        msg:"user updated succesfully",
+        data,
+    })
+    }
+    catch(err){
+        res.send(err)
+    }
+   
+ })
 
 module.exports= requestrouter

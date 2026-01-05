@@ -8,7 +8,7 @@ const {connectDB}=require("./config/databse")
 // initializing request 
 const app=express()
 // getting user model we have created in db
-const {User}=require("./models/user")
+const User=require("./models/user")
 // adding middleware for covertion javascript object
 app.use(express.json())
 // getting cookie parser
