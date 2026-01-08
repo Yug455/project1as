@@ -1,5 +1,5 @@
 const express = require("express")
-const  userauth  = require("../middelware/auth")
+const  {userauth}  = require("../middelware/auth")
 const { User } = require("../models/user")
 const requestrouter = express.Router()
 const reqconnectionmongoose= require("../models/reqconnection")
@@ -97,12 +97,12 @@ requestrouter.get("/getuser", async (req,res)=>{
         throw new Error("not valid status")
     }
     const connectionreq= await reqconnectionmongoose.findOne({
-       _id:requestId,
+       _id:requestId ,
         touserId:LoggedinUser._id,
         status:"interested",
     })
     if (!connectionreq){
-        throw new Error("invalid request request didnt found")
+        throw new Error("invalid request didnt found")
     }
     connectionreq.status = status
     const data= await connectionreq.save()
@@ -114,9 +114,9 @@ requestrouter.get("/getuser", async (req,res)=>{
     })
     }
     catch(err){
-        res.send(err)
+        res.send(err.message)
     }
    
- })
+ }) 
 
 module.exports= requestrouter

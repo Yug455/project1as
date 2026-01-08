@@ -26,4 +26,6 @@ const userauth = async(req,res,next)=>{
     res.send(err.message)
    }
 }
-module.exports=userauth
+module.exports={
+    userauth,
+}

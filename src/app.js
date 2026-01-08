@@ -20,9 +20,11 @@ const cookieparser= require("cookie-parser")
 const {authrouter}= require("./routes/authtentication")
 const profilerouter= require("./routes/profile")
 const requestrouter = require("./routes/userrequest")
+const userRouter= require("./routes/user")
 app.use("/",authrouter)
 app.use("/",profilerouter)
 app.use("/",requestrouter)
+app.use("/",userRouter)
 // connecting to db    
 connectDB()
   .then(async() => {
