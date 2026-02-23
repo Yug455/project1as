@@ -24,8 +24,18 @@ authrouter.post("/signup",async (req,res)=>{
       EmailId,
       Password:PasswordHash,
     })
-      await user.save()
-    res.send("user creates succesfully")
+      const saveuser=await user.save()
+
+    const token =await saveuser.getJwt();
+    res.cookie("token", token ,{
+
+      expires : new Date(Date.now()+ 8 * 3600000)
+    })
+
+    res.json({message: "user created sucessfulyy",
+      data:saveuser
+    })
+
    }
    catch(err){
     res.status(400).send("error occures"+err)
@@ -36,8 +46,9 @@ authrouter.post("/login", async (req, res) => {
     const { EmailId, Password } = req.body;
     const user = await User.findOne({ EmailId });
 
-    if (!user) {
-      return res.status(400).send("Invalid credentials"); 
+     if (!user) {
+      // send proper error for frontend
+      return res.status(400).json({ message: "Invalid credentials" });
     }
 
     const isMatch = await user.validatePassword(Password)
@@ -45,12 +56,12 @@ authrouter.post("/login", async (req, res) => {
       // creating jwt token 
       const token = await user.getJwt()
       // creating cookie 
-      res.cookie("Token",token)
-      res.send("user logged in succesfullt")
+      res.cookie("token",token)
+      res.json({user})
     } 
-    else{
-       res.send("Invalid credentials");
-    }
+  else {
+    res.status(400).json({ message: "Invalid credentials" });
+  }
     
   } catch (err) {
     return res.status(500).send(err.message);
@@ -87,8 +98,8 @@ authrouter.post("/login", async (req, res) => {
  
  })
 authrouter.post("/logout",(req,res)=>{
-  res.cookie("token",null,{
-    expires:new Date(Date.now())
+  res.cookie("Token",null,{
+    expires: new Date(Date.now())
   })
   res.send("logout succesfully")
 })

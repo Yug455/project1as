@@ -6,27 +6,31 @@ const {  validatepostsignup,validateupdatingrequest}= require("../utils/utility"
 profilerouter.get("/profile",userauth, async(req,res)=>{
  try{
   const user=req.user
-  res.send(`hello ${user.FirstName}`)
+  res.send(user)
+  if (!user){
+    res.status(401)
+  }
  }catch(err){
-  res.send(err.message)
+  res.status(401).send(err.message)
  }
 })
-profilerouter.post("/updateuserinfo",async (req,res)=>{
+profilerouter.post("/updateuserinfo",userauth,async (req,res)=>{
     try{
         if(!validateupdatingrequest(req)) {
    }
-   else{
+    
+    const logineduser= req.user
     console.log(req.body)
 
-    const logineduser= req.user
+   
     Object.keys(req.body).forEach((keys)=>{
         logineduser[keys]= req.body[keys];
     })
-     await logineduser.save();
-   }
+    const editeduser= await logineduser.save();
+   
    res.json({
     messsage:"yeahhhh user updated succesfully",
-    data: logineduser.toObject()
+    data: editeduser.toObject()
    })
     }
    catch(err){
